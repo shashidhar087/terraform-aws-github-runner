@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: terraform init
-        run: terraform init -get -backend=false -input=false
+        run: terraform init -upgrade -get -backend=false -input=false
       - if: contains(matrix.terraform, '1.1.')
         name: check terraform formatting
         run: terraform fmt -recursive -check=true -write=false

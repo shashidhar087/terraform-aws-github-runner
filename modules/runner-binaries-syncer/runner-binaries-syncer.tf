@@ -118,7 +118,7 @@ resource "aws_lambda_permission" "syncer" {
 ### Extra trigger to trigger from S3 to execute the lambda after first deployment
 ###################################################################################
 
-resource "aws_s3_bucket_object" "trigger" {
+resource "aws_s3_object" "trigger" {
   bucket = aws_s3_bucket.action_dist.id
   key    = "triggers/${aws_lambda_function.syncer.id}-trigger.json"
   source = "${path.module}/trigger.json"
