@@ -318,6 +318,12 @@ variable "enable_cloudwatch_agent" {
   default     = true
 }
 
+variable "enable_managed_runner_security_group" {
+  description = "Enabling the default managed security group creation. Unmanaged security groups can be specified via `runner_additional_security_group_ids`."
+  type        = bool
+  default     = true
+}
+
 variable "cloudwatch_config" {
   description = "(optional) Replaces the module default cloudwatch log config. See https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html for details."
   type        = string
@@ -488,4 +494,10 @@ variable "pool_config" {
     size                = number
   }))
   default = []
+}
+
+variable "disable_runner_autoupdate" {
+  description = "Disable the auto update of the github runner agent. Be-aware there is a grace period of 30 days, see also the [GitHub article](https://github.blog/changelog/2022-02-01-github-actions-self-hosted-runners-can-now-disable-automatic-updates/)"
+  type        = bool
+  default     = true
 }
