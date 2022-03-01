@@ -35,10 +35,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket-config" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "action_dist" {
   bucket = aws_s3_bucket.action_dist.id
-
+  count  = length(keys(lookup(var.server_side_encryption_configuration, "rule", {}))) == 0 ? 0 : 1
 
   dynamic "rule" {
-    for_each = length(keys(lookup(var.server_side_encryption_configuration, "rule", {}))) == 0 ? [] : [lookup(var.server_side_encryption_configuration, "rule", {})]
+    for_each = [lookup(var.server_side_encryption_configuration, "rule", {})]
 
     content {
       bucket_key_enabled = lookup(rule.value, "bucket_key_enabled", null)
