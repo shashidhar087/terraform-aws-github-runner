@@ -211,6 +211,12 @@ variable "logging_retention_in_days" {
   default     = 180
 }
 
+variable "logging_kms_key_id" {
+  description = "Specifies the kms key id to encrypt the logs with"
+  type        = string
+  default     = null
+}
+
 variable "runner_allow_prerelease_binaries" {
   description = "Allow the runners to update to prerelease binaries."
   type        = bool
@@ -219,8 +225,15 @@ variable "runner_allow_prerelease_binaries" {
 
 variable "block_device_mappings" {
   description = "The EC2 instance block device configuration. Takes the following keys: `device_name`, `delete_on_termination`, `volume_type`, `volume_size`, `encrypted`, `iops`"
-  type        = map(string)
-  default     = {}
+  type = list(object({
+    device_name           = string
+    delete_on_termination = bool
+    volume_type           = string
+    volume_size           = number
+    encrypted             = bool
+    iops                  = number
+  }))
+  default = []
 }
 
 variable "ami_filter" {
@@ -501,6 +514,12 @@ variable "enable_ephemeral_runners" {
   default     = false
 }
 
+variable "enable_job_queued_check" {
+  description = "Only scale if the job event received by the scale up lambda is is in the state queued. By default enabled for non ephemeral runners and disabled for ephemeral. Set this variable to overwrite the default behavior."
+  type        = bool
+  default     = null
+}
+
 variable "enable_managed_runner_security_group" {
   description = "Enabling the default managed security group creation. Unmanaged security groups can be specified via `runner_additional_security_group_ids`."
   type        = bool
@@ -584,6 +603,12 @@ variable "pool_config" {
     size                = number
   }))
   default = []
+}
+
+variable "aws_partition" {
+  description = "(optiona) partition in the arn namespace to use if not 'aws'"
+  type        = string
+  default     = "aws"
 }
 
 variable "disable_runner_autoupdate" {
