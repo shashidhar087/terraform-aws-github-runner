@@ -1,8 +1,9 @@
 import { Context, SQSEvent, SQSRecord } from 'aws-lambda';
 import { mocked } from 'jest-mock';
 
-import { adjustPool, scaleDownHandler, scaleUpHandler } from './lambda';
+import { adjustPool, monitorRunner, scaleDownHandler, scaleUpHandler } from './lambda';
 import { logger } from './logger';
+import { monitorRunners } from './monitor/monitor-runner';
 import { adjust } from './pool/pool';
 import ScaleError from './scale-runners/ScaleError';
 import { scaleDown } from './scale-runners/scale-down';
@@ -60,6 +61,7 @@ const context: Context = {
 
 jest.mock('./scale-runners/scale-up');
 jest.mock('./scale-runners/scale-down');
+jest.mock('./monitor/monitor-runner');
 jest.mock('./pool/pool');
 jest.mock('./logger');
 
@@ -154,6 +156,27 @@ describe('Adjust pool.', () => {
     mock.mockRejectedValue(error);
     const logSpy = jest.spyOn(logger, 'error');
     await adjustPool({ poolSize: 0 }, context);
+    expect(logSpy).lastCalledWith(error);
+  });
+});
+
+describe('Monitor Runners.', () => {
+  it('Monitor runners without error.', async () => {
+    const mock = mocked(monitorRunners);
+    mock.mockImplementation(() => {
+      return new Promise((resolve) => {
+        resolve();
+      });
+    });
+    await expect(monitorRunner({ metricName: 'test-runner' }, context)).resolves;
+  });
+
+  it('Handle error for monitor runners.', async () => {
+    const mock = mocked(monitorRunners);
+    const error = new Error('Handle error for monitor runners.');
+    mock.mockRejectedValue(error);
+    const logSpy = jest.spyOn(logger, 'error');
+    await monitorRunner({ metricName: 'test-runner' }, context);
     expect(logSpy).lastCalledWith(error);
   });
 });

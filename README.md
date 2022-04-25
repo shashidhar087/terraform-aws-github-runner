@@ -23,6 +23,7 @@ This [Terraform](https://www.terraform.io/) module creates the required infrastr
     - [Install app](#install-app)
   - [Encryption](#encryption)
   - [Pool](#pool)
+  - [Monitor/Alert](#monitor/alert)
   - [Idle runners](#idle-runners)
   - [Ephemeral runners](#ephemeral-runners)
   - [Prebuilt Images](#prebuilt-images)
@@ -266,6 +267,12 @@ pool_config = [{
 
 The pool is NOT enabled by default and can be enabled by setting at least one object of the pool config list. The [ephemeral example](./examples/ephemeral/README.md) contains configuration options (commented out).
 
+### Monitor/Alert
+
+The monitoring of runners and alerting feature is introduced in conjunction with Pooling feature and is primary meant to ensure the team is notified when the runners are not available due to runner provisioning or a launch failure. This module continously monitors the available idle count of runners which is 25% of pool size. If the runner count is less than the set threshold value (25% of pool size) then the cloudwatch alarm will send the notification to the SNS topic and the subscribers will be notified.
+
+The monitor feature is NOT enabled by default and can be enabled by setting the varilable "enable_runner_monitor" to "true".
+
 ### Idle runners
 
 The module will scale down to zero runners by default. By specifying a `idle_config` config, idle runners can be kept active. The scale down lambda checks if any of the cron expressions matches the current time with a margin of 5 seconds. When there is a match, the number of runners specified in the idle config will be kept active. In case multiple cron expressions matches, only the first one is taken into account. Below is an idle configuration for keeping runners active from 9 to 5 on working days.
@@ -442,6 +449,10 @@ In case the setup does not work as intended follow the trace of events:
 | <a name="input_pool_lambda_reserved_concurrent_executions"></a> [pool\_lambda\_reserved\_concurrent\_executions](#input\_pool\_lambda\_reserved\_concurrent\_executions) | Amount of reserved concurrent executions for the scale-up lambda function. A value of 0 disables lambda from being triggered and -1 removes any concurrency limitations. | `number` | `1` | no |
 | <a name="input_pool_lambda_timeout"></a> [pool\_lambda\_timeout](#input\_pool\_lambda\_timeout) | Time out for the pool lambda lambda in seconds. | `number` | `60` | no |
 | <a name="input_pool_runner_owner"></a> [pool\_runner\_owner](#input\_pool\_runner\_owner) | The pool will deploy runners to the GitHub org ID, set this value to the org to which you want the runners deployed. Repo level is not supported. | `string` | `null` | no |
+| <a name="input_runner_alert_sns_protocol"></a> [runner\_alert\_sns\_protocol](#input\_runner\_alert\_sns\_protocol) | SNS topic protocol. see https://docs.aws.amazon.com/sns/latest/api/API_Subscribe.html#:~:text=Required%3A%20No-,Protocol,-The%20protocol%20that | `string` | `null` | no |
+| <a name="input_runner_alert_sns_endpoint"></a> [runner\_alert\_sns\_endpoint](#input\_runner\_alert\_sns\_endpoint) | SNS topic endpoint value. | `string` | `null` | no |
+| <a name="input_enable_runner_monitor"></a> [enable\_runner\_monitor](#input\_enable\_runner\_monitor) | Enable Runner Monitoring and Alert feature | `bool` | `false` | no |
+| <a name="input_cw_dimension_value"></a> [enable\_cw\_dimension\_value](#input\_cw\_dimension\_value) | Cloudwatch metric dimension value for runner monitoring | `string` | `null` | no |
 | <a name="input_redrive_build_queue"></a> [redrive\_build\_queue](#input\_redrive\_build\_queue) | Set options to attach (optional) a dead letter queue to the build queue, the queue between the webhook and the scale up lambda. You have the following options. 1. Disable by setting, `enalbed' to false. 2. Enable by setting `enabled` to `true`, `maxReceiveCount` to a number of max retries.` | <pre>object({<br>    enabled         = bool<br>    maxReceiveCount = number<br>  })</pre> | <pre>{<br>  "enabled": false,<br>  "maxReceiveCount": null<br>}</pre> | no |
 | <a name="input_repository_white_list"></a> [repository\_white\_list](#input\_repository\_white\_list) | List of repositories allowed to use the github app | `list(string)` | `[]` | no |
 | <a name="input_role_path"></a> [role\_path](#input\_role\_path) | The path that will be added to role path for created roles, if not set the environment name will be used. | `string` | `null` | no |

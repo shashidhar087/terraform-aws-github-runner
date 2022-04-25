@@ -616,3 +616,32 @@ variable "disable_runner_autoupdate" {
   type        = bool
   default     = false
 }
+
+variable "runner_alert_sns_protocol" {
+  description = "Runner alert SNS topic protocol type"
+  type        = string
+  default     = ""
+}
+
+variable "runner_alert_sns_endpoint" {
+  description = "Runner alert SNS topic protocol endpoint value"
+  type        = string
+  default     = ""
+}
+
+
+variable "monitor_schedule_expression" {
+  type    = string
+  default = "cron(*/1 * * * ? *)"
+}
+
+variable "enable_runner_monitor" {
+  type    = bool
+  default = false
+}
+
+variable "cw_dimension_value" {
+  description = "Cloudwatch metric dimension value for runner monitoring. Format - Github_Org_Name - ServieName - Architecture - CustomLabel"
+  type        = string
+  default     = ""
+}

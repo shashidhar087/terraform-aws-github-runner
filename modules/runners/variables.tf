@@ -526,3 +526,43 @@ variable "disable_runner_autoupdate" {
   type        = bool
   default     = false
 }
+
+variable "cw_metric_namespace" {
+  description = "Cloudwatch metric namespace for runner monitoring"
+  type        = string
+  default     = "github_runners"
+}
+
+variable "cw_metric_name" {
+  description = "Cloudwatch metric name for runner monitoring"
+  type        = string
+  default     = "runner_count"
+}
+
+variable "cw_dimension_name" {
+  description = "Cloudwatch metric dimension name for runner monitoring"
+  type        = string
+  default     = "Runner_Name"
+}
+variable "cw_dimension_value" {
+  description = "Cloudwatch metric dimension value for runner monitoring. Format - Github_Org_Name - ServieName - Architecture - CustomLabel"
+  type        = string
+  default     = ""
+}
+variable "cw_unit" {
+  description = "Cloudwatch metric unit for runner monitoring"
+  type        = string
+  default     = "Count"
+}
+
+variable "runner_alert_sns_protocol" {
+  description = "Runner alert SNS topic protocol type"
+  type        = string
+  default     = ""
+}
+
+variable "runner_alert_sns_endpoint" {
+  description = "Runner alert SNS topic protocol endpoint value"
+  type        = string
+  default     = ""
+}

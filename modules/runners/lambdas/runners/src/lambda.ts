@@ -2,6 +2,7 @@ import { Context, SQSEvent } from 'aws-lambda';
 import 'source-map-support/register';
 
 import { LogFields, logger } from './logger';
+import { MonitorEvent, monitorRunners } from './monitor/monitor-runner';
 import { PoolEvent, adjust } from './pool/pool';
 import ScaleError from './scale-runners/ScaleError';
 import { scaleDown } from './scale-runners/scale-down';
@@ -44,6 +45,16 @@ export async function adjustPool(event: PoolEvent, context: Context): Promise<vo
 
   try {
     await adjust(event);
+  } catch (e) {
+    logger.error(e);
+  }
+}
+
+export async function monitorRunner(event: MonitorEvent, context: Context): Promise<void> {
+  logger.setSettings({ requestId: context.awsRequestId });
+
+  try {
+    await monitorRunners(event);
   } catch (e) {
     logger.error(e);
   }
