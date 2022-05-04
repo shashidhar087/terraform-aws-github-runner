@@ -210,7 +210,7 @@ module "runners" {
   pool_runner_owner                          = var.pool_runner_owner
   pool_lambda_reserved_concurrent_executions = var.pool_lambda_reserved_concurrent_executions
   runner_alert_sns_protocol                  = var.runner_alert_sns_protocol
-  runner_alert_sns_endpoint                  = var.runner_alert_sns_endpoint_prod
+  runner_alert_sns_endpoint                  = var.runner_alert_sns_endpoint
   enable_runner_monitor                      = var.enable_runner_monitor
   monitor_schedule_expression                = var.monitor_schedule_expression
   cw_dimension_value                         = var.cw_dimension_value
