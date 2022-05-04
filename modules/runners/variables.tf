@@ -566,3 +566,13 @@ variable "runner_alert_sns_endpoint" {
   type        = string
   default     = ""
 }
+
+variable "monitor_schedule_expression" {
+  type    = string
+  default = "cron(*/1 * * * ? *)"
+}
+
+variable "enable_runner_monitor" {
+  type    = bool
+  default = false
+}
